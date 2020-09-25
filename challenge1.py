@@ -47,11 +47,11 @@ df = df.drop(columns=['Unnamed: 0'])
 #I first want to find if there are any outliers for DLI
 
 #Isolate the DLI column
-df = df["DLI"] 
+df_dli = df["DLI"] 
 
 #used the IQR to find any outliers 
-Q1 = df.quantile(0.25)
-Q3 = df.quantile(0.75)
+Q1 = df_dli.quantile(0.25)
+Q3 = df_dli.quantile(0.75)
 IQR = Q3 - Q1
 print(IQR)
 
@@ -63,6 +63,9 @@ cut_off = IQR * 1.5
 lower, upper = Q1 - cut_off, Q3 + cut_off
 
 #we can use this to identify outliers 
+outliers = [x for x in df_dli if x < lower or x > upper]
+
+#we can see there are no outliers in the DLI variable
 
 #_____________________________________________
 
