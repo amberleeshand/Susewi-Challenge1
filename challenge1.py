@@ -65,6 +65,10 @@ lower, upper = Q1 - cut_off, Q3 + cut_off
 #we can use this to identify outliers 
 outliers = [x for x in df_dli if x < lower or x > upper]
 
+#there were no outliers for the DLI variable 
+
+#I used the same method and calculated for any outliers for the other variables: dark hours and photoperiod, and this showed no outliers.
+
 #we can see there are no outliers in the DLI variable
 
 #_____________________________________________
@@ -173,9 +177,62 @@ anotherone.to_csv('non-dli-final.csv')
 
 #An outlier is a data point in a data set rhat is distant from all other observations. A data point that lies outside the overall distribution of the dataset 
 
-import numpy as np 
-import matplotlib.pyplot as plt
-%matplotlib inline
-
 #the criteria to identify an outlier by using interquartile range is a data point that falls outside of 1.5 times of an interquartile range above the 3rd quartile and below the 1st quartile
+
+#Import required libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+#Reading the data 
+df = pd.read_csv('non-dli-final.csv')
+print(df.shape)
+print(df.info())
+
+#dropped an unwanted table
+df = df.drop(columns=['Unnamed: 0'])
+
+#created a new df
+df_moles = df["μmoles"]
+
+#calculated the IQR
+Q1 = df_moles.quantile(0.25)
+Q3 = df_moles.quantile(0.75)
+IQR = Q3 - Q1
+print(IQR)
+
+#worked out the cut off point to detect outliers
+
+cut_off = IQR * 1.5
+lower, upper = Q1 - cut_off, Q3 + cut_off
+
+outliers = [x for x in df_moles if x < lower or x > upper]
+
+#found several outliers - to find how many outliers:
+
+print(len(outliers))
+
+#this found 938 outliers
+
+
+#i wanted to visually represent the outliers - first by using a boxplot 
+
+plt.boxplot(df["μmoles"])
+plt.show()
+
+#this printed the boxplot and the circles indicate the outliers 
+
+#i also wanted to visually show the data by creating a histogram. Histograms are used to visualise the distribution of a numerical value. It is a great way of showing an outlier as an outlier will appear outside the overall pattern of distribution. 
+
+df.μmoles.hist()
+
+#The histogram showed that the distribution is right-skewed, and there are extreme higher values at the right of the histogram
+
+#I then wanted to create a scatterplot as it visualised the relationship between two quantitative variables. I wanted to see if there was a general pattern between the μmoles and the date
+
+fig, ax = plt.subplots(figsize=(12,6))
+ax.scatter(df['Date'], df['μmoles'])
+ax.set_xlabel('Date')
+ax.set_ylabel('μmoles')
+plt.show()
 
