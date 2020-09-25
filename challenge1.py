@@ -11,14 +11,22 @@ dli.sort_values(by=['Date'], inplace=True, ascending=True)
 #convert to csv file 
 dli.to_csv('only_dli_asendingdate.csv')
 
-#then we needed to clean the data to make sure we had the relevant columns
+#then we needed to clean the data to make sure we had the relevant columns and also see if we could find any outliers 
+
+#to understand what the data is telling us, it is also important to understand what DLI is. DLI stands for daily light integral, and it the amount of photosynthetically active radiation (PAR) recieved each day as a function of light intensity and duration
+
+#DLI is used to keep track of the amount of light the algae is recieving 
+
+#Outdoor DLI ranges from 5 to 60 mol·m^-2·d^-1
+
+#In the greenhouse, values seldom exceed 25 mol·m^-2·d^-1
 
 #Import required libraries
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-#Reading the data
+#Reading the data 
 df = pd.read_csv('only_dli_asendingdate.csv')
 print(df.shape)
 print(df.info())
@@ -29,13 +37,15 @@ df.describe()
 #deleting an unwanted column
 df = df.drop(columns=['Unnamed: 0'])
 
+
+
 #used the IQR to find any outliers 
 Q1 = df.quantile(0.25)
 Q3 = df.quantile(0.75)
 IQR = Q3 - Q1
 print(IQR)
 
-#
+#_____________________________________________
 
 #the second part of the challenge was to assemble the files without '_DLI' and export them back to CSV
 
@@ -120,13 +130,12 @@ df3 = df3.dropna(axis='rows')
 
 anotherone = pd.concat([df3, df_split], ignore_index=True)
 
-#produced unwanted 00:00:00 for some od the files 
+#this produced unwanted 00:00:00 for some of the files - so I needed to create a new df to correct this:
 
 anotherone['Date'] = pd.to_datetime(anotherone['Date'])
 
 anotherone['new_date_column'] = anotherone['Date'].dt.date
 
-anotherone.loc[anotherone['Date']=='2019-10-10', ['Date']]
 
 #this got rid of the 00:00:00 and created a new_date_column column that needed to be dropped 
 
@@ -134,3 +143,17 @@ anotherone = anotherone.drop(columns=['new_date_column'])
 
 #converted that into a CSV file 
 anotherone.to_csv('non-dli-final.csv')
+
+#________________________________________
+
+
+#time to find any outliers
+
+#An outlier is a data point in a data set rhat is distant from all other observations. A data point that lies outside the overall distribution of the dataset 
+
+import numpy as np 
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+#the criteria to identify an outlier by using interquartile range is a data point that falls outside of 1.5 times of an interquartile range above the 3rd quartile and below the 1st quartile
+
