@@ -21,6 +21,11 @@ dli.to_csv('only_dli_asendingdate.csv')
 
 #In the greenhouse, values seldom exceed 25 mol·m^-2·d^-1
 
+#time to find any outliers
+
+#An outlier is a data point in a data set rhat is distant from all other observations. A data point that lies outside the overall distribution of the dataset 
+
+
 #Import required libraries
 import pandas as pd
 import numpy as np
@@ -37,13 +42,27 @@ df.describe()
 #deleting an unwanted column
 df = df.drop(columns=['Unnamed: 0'])
 
+#the criteria to identify an outlier by using interquartile range is a data point that falls outside of 1.5 times of an interquartile range above the 3rd quartile and below the 1st quartile
 
+#I first want to find if there are any outliers for DLI
+
+#Isolate the DLI column
+df = df["DLI"] 
 
 #used the IQR to find any outliers 
 Q1 = df.quantile(0.25)
 Q3 = df.quantile(0.75)
 IQR = Q3 - Q1
 print(IQR)
+
+#we can then calculate the cutoff for outliers as 1.5 times the IQR and subtract this cut-off from the 25th percentile and add it to the 75th percentile to give actual limits on the data
+
+#calculate the outlier cutoff
+
+cut_off = IQR * 1.5
+lower, upper = Q1 - cut_off, Q3 + cut_off
+
+#we can use this to identify outliers 
 
 #_____________________________________________
 
@@ -105,7 +124,7 @@ df_split
 
 df_split['Date'] = pd.to_datetime(df_split['Date'])
 
-#this saved 4310 which would have been lost 
+#this saved 4310 rows which would have been lost 
 
 #then created df3 because now we need to combine the two dataframes which we initally split up
 
